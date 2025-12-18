@@ -29,12 +29,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libmemcached-dev \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
     && docker-php-ext-install -j$(nproc) \
         bcmath \
         gd \
         gmp \
-        imap \
         intl \
         mbstring \
         opcache \
@@ -49,10 +47,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install PECL extensions
+# Install PECL extensions (imap moved to PECL in PHP 8.4)
 RUN pecl channel-update pecl.php.net \
+    && PHP_OPENSSL=yes pecl install imap \
     && pecl install amqp apcu excimer igbinary redis \
-    && docker-php-ext-enable amqp apcu excimer igbinary redis \
+    && docker-php-ext-enable imap amqp apcu excimer igbinary redis \
     && rm -rf /tmp/pear
 
 # Copy base PHP configuration
