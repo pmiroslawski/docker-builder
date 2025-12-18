@@ -1,0 +1,37 @@
+# Development overrides - automatically loaded by docker compose
+services:
+  # Override php-fpm to use dev image
+  php-fpm:
+    image: php-fpm-dev:latest
+    build:
+      context: .
+      dockerfile: _docker/dev/Dockerfile
+      args:
+        BASE_IMAGE: php-fpm-base:latest
+    volumes:
+      - ./app:/var/www/html:cached
+    environment:
+      - PHP_IDE_CONFIG=serverName=docker
+      - XDEBUG_MODE=debug,develop
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # Testing container (optional, run with --profile testing)
+  php-testing:
+    image: php-fpm-testing:latest
+    hostname: php-testing
+    build:
+      context: .
+      dockerfile: _docker/testing/Dockerfile
+      args:
+        DEV_IMAGE: php-fpm-dev:latest
+    depends_on:
+      - php-fpm
+    volumes:
+      - ./app:/var/www/html:cached
+    environment:
+      - PANTHER_NO_SANDBOX=1
+    profiles:
+      - testing
+    networks:
+      - app-network

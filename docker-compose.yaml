@@ -1,0 +1,30 @@
+services:
+  # Base image - used as build dependency
+  php-base:
+    image: php-fpm-base:latest
+    build:
+      context: .
+      dockerfile: _docker/base/Dockerfile
+    profiles:
+      - build
+
+  # Production PHP-FPM
+  php-fpm:
+    image: php-fpm-prod:latest
+    hostname: php-fpm
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: _docker/prod/Dockerfile
+      args:
+        BASE_IMAGE: php-fpm-base:latest
+    depends_on:
+      - php-base
+    volumes:
+      - ./app:/var/www/html:ro
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
