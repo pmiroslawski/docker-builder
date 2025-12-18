@@ -30,11 +30,13 @@ php:8.4-fpm-bookworm
 
 ## PHP Extensions
 
-Included in all images:
-- bcmath, gd, gmp, imap, intl, mbstring
+**Core extensions:**
+- bcmath, gd, gmp, intl, mbstring
 - opcache, pcntl, pdo, pdo_mysql, mysqli
 - sockets, soap, xml, zip
-- amqp, apcu, excimer, igbinary, redis
+
+**PECL extensions:**
+- amqp, apcu, excimer, igbinary, imap, redis
 
 ## Quick Start
 
